@@ -162,7 +162,7 @@ player = who_start
 
 
 #PARAMETRES
-nombre_partie = 1000
+nombre_partie = 200
 ia_subit = nombre_partie // 2
 
 

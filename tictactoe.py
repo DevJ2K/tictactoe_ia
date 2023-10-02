@@ -3,6 +3,7 @@ import random
 import time
 import typer
 from read_game import deplacement
+# from interaction import show_title
 
 
 
@@ -14,8 +15,13 @@ gagnant = None
 who_start = 1
 player = who_start
 
-def afficher_la_map():
-    os.system("cls")
+def afficher_la_map(name="TIC-TAC-TOE", color="bright_red", nbr_equals=13):
+    os.system('clear')
+    page = typer.style(name, fg=color)
+    print(f"|{'#' * nbr_equals * 2 + '#' * len(name)}|")
+    typer.echo(f"|{'=' * nbr_equals}{page}{'=' * nbr_equals}|")
+    print(f"|{'#' * nbr_equals * 2 + '#' * len(name)}|")
+    
     print(" ___________ ")
     print("|           |")
     print("| {} | {} | {} |".format(p[0], p[1], p[2]))
@@ -104,70 +110,110 @@ def tour_ia():
     else:   #LE JEU CONTINUE
         return False
 
+def reset_game():
+    global deroulement_game, p
+    deroulement_game = ""
+    p = [" " for _ in range(9)]
 
-while True:
+def save_game():
+    global deroulement_game
+    #Recupere les games dans 'cerveau_ia.txt' et est capable de reconstituer une partie.
 
-    if player == 1:
-        statusUtilisateur = tour_utilisateur()
-        if statusUtilisateur == True:
-            gagnant = "Victoire du joueur."
-            break
+    #A = Celui qui commence
+    #I = Le suivant
 
-        if statusUtilisateur == "tie":
-            gagnant = "Egalité."
-            break
+    #Si la sauvegarde commence par A, ça signifie que c'est l'utilisateur qui a commencé, sinon c'est l'IA
 
-        player = 2
-    
+    #Si la sauvegarde termine par L, c'est une défaite à ne pas reproduire, sinon c'est une Win sur laquelle l'IA peut se baser pour la reproduire, ou une Egalité si c'est E
 
-    if player == 2:
-        statusIA = tour_ia()
-        if statusIA == True:
-            gagnant = "Victoire de l'IA."
-            break
-
-        if statusIA == "tie":
-            gagnant = "Egalité."
-            break
-        player = 1
-
-afficher_la_map()
-print(gagnant)
+    #RECUPERER TOUTES LES GAMES
+    with open("cerveau_ia.txt", "r") as f:
+        all_games = f.read().splitlines()
 
 
-# print(deroulement_game)
-
-################################################
-#Recupere les games dans 'cerveau_ia.txt' et est capable de reconstituer une partie.
-
-#A = Celui qui commence
-#I = Le suivant
-
-#Si la sauvegarde commence par A, ça signifie que c'est l'utilisateur qui a commencé, sinon c'est l'IA
-
-#Si la sauvegarde termine par L, c'est une défaite à ne pas reproduire, sinon c'est une Win sur laquelle l'IA peut se baser pour la reproduire, ou une Egalité si c'est E
-
-#RECUPERER TOUTES LES GAMES
-with open("cerveau_ia.txt", "r") as f:
-    all_games = f.read().splitlines()
-
-
-#SAUVEGARDER LA GAME
-with open("cerveau_ia.txt", "a") as f:
-    if deroulement_game not in all_games:
-        if who_start == 1:
-            f.write("\n"+deroulement_game)
-            print("Nouvelle apprentissage !")
-
-        if who_start == 2:
-            if deroulement_game.endswith("W"):
-                deroulement_game = deroulement_game.replace("W", "L")
-            elif deroulement_game.endswith("L"):
-                deroulement_game = deroulement_game.replace("L", "W")
-
-            deroulement_game = deroulement_game.replace("A", "X").replace("I", "A").replace("X", "I")
-            if deroulement_game not in all_games:
+    #SAUVEGARDER LA GAME
+    with open("cerveau_ia.txt", "a") as f:
+        if deroulement_game not in all_games:
+            if who_start == 1:
                 f.write("\n"+deroulement_game)
                 print("Nouvelle apprentissage !")
 
+            if who_start == 2:
+                if deroulement_game.endswith("W"):
+                    deroulement_game = deroulement_game.replace("W", "L")
+                elif deroulement_game.endswith("L"):
+                    deroulement_game = deroulement_game.replace("L", "W")
+
+                deroulement_game = deroulement_game.replace("A", "X").replace("I", "A").replace("X", "I")
+                if deroulement_game not in all_games:
+                    f.write("\n"+deroulement_game)
+                    print("Nouvelle apprentissage !")
+
+
+if __name__ == "__main__":
+    while True:
+
+        if player == 1:
+            statusUtilisateur = tour_utilisateur()
+            if statusUtilisateur == True:
+                gagnant = "Victoire du joueur."
+                break
+
+            if statusUtilisateur == "tie":
+                gagnant = "Egalité."
+                break
+
+            player = 2
         
+
+        if player == 2:
+            statusIA = tour_ia()
+            if statusIA == True:
+                gagnant = "Victoire de l'IA."
+                break
+
+            if statusIA == "tie":
+                gagnant = "Egalité."
+                break
+            player = 1
+
+    afficher_la_map()
+    print(gagnant)
+
+
+    # print(deroulement_game)
+
+    ################################################
+    #Recupere les games dans 'cerveau_ia.txt' et est capable de reconstituer une partie.
+
+    #A = Celui qui commence
+    #I = Le suivant
+
+    #Si la sauvegarde commence par A, ça signifie que c'est l'utilisateur qui a commencé, sinon c'est l'IA
+
+    #Si la sauvegarde termine par L, c'est une défaite à ne pas reproduire, sinon c'est une Win sur laquelle l'IA peut se baser pour la reproduire, ou une Egalité si c'est E
+
+    #RECUPERER TOUTES LES GAMES
+    with open("cerveau_ia.txt", "r") as f:
+        all_games = f.read().splitlines()
+
+
+    #SAUVEGARDER LA GAME
+    with open("cerveau_ia.txt", "a") as f:
+        if deroulement_game not in all_games:
+            if who_start == 1:
+                f.write("\n"+deroulement_game)
+                print("Nouvelle apprentissage !")
+
+            if who_start == 2:
+                if deroulement_game.endswith("W"):
+                    deroulement_game = deroulement_game.replace("W", "L")
+                elif deroulement_game.endswith("L"):
+                    deroulement_game = deroulement_game.replace("L", "W")
+
+                deroulement_game = deroulement_game.replace("A", "X").replace("I", "A").replace("X", "I")
+                if deroulement_game not in all_games:
+                    f.write("\n"+deroulement_game)
+                    print("Nouvelle apprentissage !")
+
+            
