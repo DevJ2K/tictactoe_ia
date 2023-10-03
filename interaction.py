@@ -105,6 +105,6 @@ def learning_menu():
         erreur = typer.style("Erreur !", fg="red")
         typer.echo(f"{erreur} La valeur que vous avez entré n'est pas un nombre.")
         input("(Appuyer sur Entrée pour recommencer)")
-        return learning_menu()
+        return home()
 
 home()
