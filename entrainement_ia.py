@@ -149,8 +149,6 @@ def sauvegarder_la_partie():
                     nombre_partie_nouvelle += 1
 
 
-
-
 p = [" " for _ in range(9)]
 
 deroulement_game = ""
@@ -170,44 +168,60 @@ ia_subit = nombre_partie // 2
 victoire_ia = 0
 egalite_ia = 0
 nombre_partie_nouvelle = 0
+if __name__ == "__name__":
+    p = [" " for _ in range(9)]
 
-print("Apprentissage en cours...")
+    deroulement_game = ""
 
-with typer.progressbar(range(nombre_partie)) as progress:
-    for i in progress:
+    gagnant = None
+    who_start = 1
+    player = who_start
 
-        #Rénitialiser la game
-        p = [" " for _ in range(9)]
-        deroulement_game = ""
-        player = who_start
-        gagnant = None
 
-        if i == ia_subit:
-            who_start = 2
+
+    #PARAMETRES
+    nombre_partie = 200
+    ia_subit = nombre_partie // 2
+
+
+    #STATS
+    victoire_ia = 0
+    egalite_ia = 0
+    nombre_partie_nouvelle = 0
+
+    print("Apprentissage en cours...")
+
+    with typer.progressbar(range(nombre_partie)) as progress:
+        for i in progress:
+
+            #Rénitialiser la game
+            p = [" " for _ in range(9)]
+            deroulement_game = ""
             player = who_start
+            gagnant = None
 
-        lancer_partie(player=who_start)
-        
-        # time.sleep(0.5)
-        if gagnant == "Victoire de l'IA.":
-            victoire_ia += 1
-        elif gagnant == "Egalité.":
-            egalite_ia += 1
+            if i == ia_subit:
+                who_start = 2
+                player = who_start
 
-        sauvegarder_la_partie()
-        # afficher_la_map()
-        # print(gagnant)
+            lancer_partie(player=who_start)
+            
+            # time.sleep(0.5)
+            if gagnant == "Victoire de l'IA.":
+                victoire_ia += 1
+            elif gagnant == "Egalité.":
+                egalite_ia += 1
 
-# lancer_partie(player=2)
+            sauvegarder_la_partie()
+            # afficher_la_map()
+            # print(gagnant)
 
-
-# afficher_la_map()
-# print(gagnant)
-print(f"Stats de l'IA : [{nombre_partie} Parties]\nVictoire -> {victoire_ia} | Egalité -> {egalite_ia} | Défaite -> {nombre_partie-(victoire_ia+egalite_ia)}")
-print(f"L'IA a gagné {(100*victoire_ia)//nombre_partie}% de ses parties.")
-print(f"L'IA a appris {nombre_partie_nouvelle} nouvelles parties !")
-# sauvegarder_la_partie()
+    # lancer_partie(player=2)
 
 
-
-        
+    # afficher_la_map()
+    # print(gagnant)
+    print(f"Stats de l'IA : [{nombre_partie} Parties]\nVictoire -> {victoire_ia} | Egalité -> {egalite_ia} | Défaite -> {nombre_partie-(victoire_ia+egalite_ia)}")
+    print(f"L'IA a gagné {(100*victoire_ia)//nombre_partie}% de ses parties.")
+    print(f"L'IA a appris {nombre_partie_nouvelle} nouvelles parties !")
+    # sauvegarder_la_partie()

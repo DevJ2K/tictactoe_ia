@@ -1,6 +1,8 @@
 import os
 import typer
 from tictactoe import *
+from entrainement_ia import *
+
 
 def show_title(name, color, nbr_equals):
     os.system('clear')
@@ -80,5 +82,64 @@ def start_game_menu():
         return start_game_menu()
     return play_game(player=int(choix))
 
+
+def learning(nombre_partie):
+    show_title("APPRENTISSAGE EN COURS", "red", 9)
+    ia_subit = nombre_partie // 2
+    gagnant = None
+    who_start = 1
+    player = who_start
+
+    #STATS
+    victoire_ia = 0
+    egalite_ia = 0
+    nombre_partie_nouvelle = 0
+    with typer.progressbar(range(nombre_partie)) as progress:
+        for i in progress:
+
+            #Rénitialiser la game
+            p = [" " for _ in range(9)]
+            deroulement_game = ""
+            player = who_start
+            gagnant = None
+
+            if i == ia_subit:
+                who_start = 2
+                player = who_start
+
+            lancer_partie(player=who_start)
+            
+            # time.sleep(0.5)
+            if gagnant == "Victoire de l'IA.":
+                victoire_ia += 1
+            elif gagnant == "Egalité.":
+                egalite_ia += 1
+
+            sauvegarder_la_partie()
+            # afficher_la_map()
+            # print(gagnant)
+
+    # lancer_partie(player=2)
+
+
+    # afficher_la_map()
+    # print(gagnant)
+    print(f"Stats de l'IA : [{nombre_partie} Parties]\nVictoire -> {victoire_ia} | Egalité -> {egalite_ia} | Défaite -> {nombre_partie-(victoire_ia+egalite_ia)}")
+    print(f"L'IA a gagné {(100*victoire_ia)//nombre_partie}% de ses parties.")
+    print(f"L'IA a appris {nombre_partie_nouvelle} nouvelles parties !")
+
+def learning_menu():
+    show_title("MACHINE LEARNING", "bright_magenta", 13)
+    print("Combien de parties souhaitez-vous que l'IA fasse ?")
+    choix = input("-> ")
+    if choix.lower() in ["q", "quit", "b", "back", "return"]:
+        return home()
+    try:
+        print("")
+    except:
+        erreur = typer.style("Erreur !", fg="red")
+        typer.echo(f"{erreur} La valeur que vous avez entré n'est pas un nombre.")
+        input("(Appuyer sur Entrée pour recommencer)")
+        return learning_menu()
 
 home()
